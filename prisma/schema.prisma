@@ -1,0 +1,139 @@
+datasource db {
+  provider = "mongodb"  
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+model User {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  clerkId       String        @unique
+  username       String        @unique
+  email          String        @unique
+
+  profilePic     String?        @default("https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png")
+  bio            String?
+
+  followers      Follower[]    @relation("followers")
+  following      Follower[]    @relation("following")
+
+  posts          Post[]
+  comments       Comment[]
+  likes          Like[]
+
+  conversations  Conversation[] @relation("UserConversations")
+  messages       Message[]
+
+  notifications  Notification[]
+
+  createdAt      DateTime       @default(now())
+}
+
+model Follower {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  followerId String  @db.ObjectId
+  followingId String @db.ObjectId
+
+  follower   User    @relation("followers", fields: [followerId], references: [id])
+  following  User    @relation("following", fields: [followingId], references: [id])
+
+  createdAt  DateTime @default(now())
+
+  @@unique([followerId, followingId])
+}
+
+model Post {
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String     @db.ObjectId
+  caption       String?
+  image         String?
+  video         String?
+  likesCount    Int        @default(0)
+  commentsCount Int        @default(0)
+  createdAt     DateTime   @default(now())
+
+  user          User       @relation(fields: [userId], references: [id])
+  comments      Comment[]
+  likes         Like[]
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  postId    String   @db.ObjectId
+  userId    String   @db.ObjectId
+  text      String
+  createdAt DateTime @default(now())
+
+  post      Post     @relation(fields: [postId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Like {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  postId  String @db.ObjectId
+  userId  String @db.ObjectId
+
+  post    Post   @relation(fields: [postId], references: [id])
+  user    User   @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId])
+}
+
+model Conversation {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  isGroup    Boolean    @default(false)
+  groupName  String?
+  groupImage String?
+
+  members    User[]     @relation("UserConversations")
+  messages   Message[]
+
+  lastMessageId String? @db.ObjectId
+  lastMessage   Message? @relation("LastMessage", fields: [lastMessageId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Message {
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  conversationId String     @db.ObjectId
+  senderId       String     @db.ObjectId
+
+  text           String?
+  image          String?
+  video          String?
+  audio          String?
+
+  seenBy         String[]   @db.ObjectId
+
+  createdAt      DateTime   @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  sender         User        @relation(fields: [senderId], references: [id])
+
+  @@index([conversationId])
+}
+
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  senderId  String   @db.ObjectId
+  type      NotificationType
+  postId    String?  @db.ObjectId
+  messageId String?  @db.ObjectId
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+// Enum for Notification Type
+enum NotificationType {
+  like
+  comment
+  follow
+  message
+}

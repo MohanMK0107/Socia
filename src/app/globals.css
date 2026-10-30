@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+:root{
+  --font-montserrat: var(--font-montserrat);
+  --font-poppins: var(--font-poppins);
+  --font-inter: var(--font-inter); 
+  --font-outfit: var(--font-outfit);
+}
+body{
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+}
+.f-montserrat {
+  font-family: "Montserrat",sans-serif;
+}
+.f-outfit {
+  font-family: "Outfit",sans-serif;
+}
+.f-poppins {
+  font-family: "Poppins",sans-serif;
+}
+.f-inter {
+  font-family: "Inter",sans-serif;
+}
+
+.circle {
+  border: 3px solid transparent;
+  background:linear-gradient(#151515,#151515) padding-box,
+  linear-gradient(to top,#3494e6,#ec6ead)border-box;
+  border-radius: 50% ;
+  width: 50px ;
+  height: 50px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.postImage-view{
+  animation: popup 0.35s ease-out forwards;
+}
+
+@keyframes popup{
+  from{
+    opacity: 0;
+    transform: translateY(12px);
+  }to{
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
