@@ -5,8 +5,40 @@
   --font-poppins: var(--font-poppins);
   --font-inter: var(--font-inter); 
   --font-outfit: var(--font-outfit);
+
+  --background: #ffffff;
+  --foreground: #171923;
+
+  --surface: #f5f6fa;
+  --card: #ffffff;
+
+  --primary: #5146e5;
+  --secondary: #8b7cff;
+
+  --muted: #858a9a;
+  --border: #e8eaf0;
 }
+
+[data-theme="dark"] {
+  --background: #080b18;
+  --foreground: #f8fafc;
+
+  --surface: #11162a;
+  --card: #171d35;
+
+  --primary: #8b5cf6;
+  --secondary: #d946ef;
+
+  --muted: #9299b5;
+  --border: #252d48;
+}
+
 body{
+  background-color: var(--background);
+  color: var(--foreground);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
   box-sizing: border-box;
   padding: 0;
   margin: 0;
